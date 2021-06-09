@@ -46,6 +46,15 @@ GET_DIRECTORY_PROPERTY(HAS_PARENT PARENT_DIRECTORY)
 INCLUDE(${KOKKOS_SRC_PATH}/cmake/kokkos_functions.cmake)
 INCLUDE(${KOKKOS_SRC_PATH}/cmake/kokkos_pick_cxx_std.cmake)
 
+OPTION(KOKKOS_ENABLE_QUADMATH "Flag to turn off Quadmath (FLOAT128) support" OFF)
+IF (KOKKOS_ENABLE_QUADMATH)
+  MESSAGE("-- Kokkos QuadMath is Enabled.")
+  SET(KOKKOS_HAS_QUADMATH TRUE)
+ELSE()
+  MESSAGE("-- Kokkos QuadMath is NOT Enabled.")
+  SET(KOKKOS_HAS_QUADMATH FALSE)
+ENDIF ()
+
 SET(KOKKOS_ENABLED_OPTIONS)      #exported in config file
 SET(KOKKOS_ENABLED_DEVICES)      #exported in config file
 SET(KOKKOS_ENABLED_TPLS)         #exported in config file

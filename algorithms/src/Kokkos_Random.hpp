@@ -51,6 +51,12 @@
 #include <cstdlib>
 #include <cmath>
 
+#ifndef KOKKOS_ENABLE_CUDA
+#ifdef KOKKOS_HAS_QUADMATH 
+#include <quadmath.h>
+#endif
+#endif
+
 /// \file Kokkos_Random.hpp
 /// \brief Pseudorandom number generators
 ///
@@ -210,6 +216,21 @@ namespace Kokkos {
     KOKKOS_INLINE_FUNCTION
     double drand(const double& start, const double& end );
 
+    //Draw a equidistributed long double in the range [0,1.0)
+    KOKKOS_INLINE_FUNCTION
+    long double ldrand();
+
+    //Draw a equidistributed long double in the range [0,range)
+    KOKKOS_INLINE_FUNCTION
+    long double ldrand(const long double& range);
+
+    //Draw a equidistributed long double in the range [start,end)
+    KOKKOS_INLINE_FUNCTION
+    long double ldrand(const long double& start, const long double& end );
+
+    //Draw a standard normal distributed double
+    KOKKOS_INLINE_FUNCTION
+    double normal() ;
     //Draw a standard normal distributed double
     KOKKOS_INLINE_FUNCTION
     double normal() ;
@@ -478,6 +499,42 @@ struct rand<Generator, double> {
     return gen.drand(start, end);
   }
 };
+
+#ifndef KOKKOS_ENABLE_CUDA
+template <class Generator>
+struct rand<Generator, long double> {
+  KOKKOS_INLINE_FUNCTION
+  static long double max() { return 1.0; }
+  KOKKOS_INLINE_FUNCTION
+  static long double draw(Generator& gen) { return gen.ldrand(); }
+  KOKKOS_INLINE_FUNCTION
+  static long double draw(Generator& gen, const long double& range) {
+    return gen.ldrand(range);
+  }
+  KOKKOS_INLINE_FUNCTION
+  static long double draw(Generator& gen, const long double& start, const long double& end) {
+    return gen.ldrand(start, end);
+  }
+};
+#ifdef KOKKOS_HAS_QUADMATH 
+template <class Generator>
+struct rand<Generator, __float128> {
+  KOKKOS_INLINE_FUNCTION
+  static __float128 max() { return 1.0; }
+  KOKKOS_INLINE_FUNCTION
+  static __float128 draw(Generator& gen) { return gen.f128rand(); }
+  KOKKOS_INLINE_FUNCTION
+  static __float128 draw(Generator& gen, const __float128& range) {
+    return gen.f128rand(range);
+  }
+  KOKKOS_INLINE_FUNCTION
+  static long double draw(Generator& gen, const long double& start, const long double& end) {
+    return gen.f128rand(start, end);
+  }
+};
+#endif
+#endif
+
 
 template <class Generator>
 struct rand<Generator, Kokkos::complex<float> > {
@@ -831,6 +888,33 @@ class Random_XorShift64 {
   double drand(const double& start, const double& end) {
     return drand(end - start) + start;
   }
+
+#ifndef  KOKKOS_ENABLE_CUDA
+  KOKKOS_INLINE_FUNCTION
+  long double ldrand() { return urand64() / static_cast<long double>(MAX_URAND64); }
+
+  KOKKOS_INLINE_FUNCTION
+  long double ldrand(const long double& range) {
+    return range * urand64() / static_cast<long double>(MAX_URAND64);
+  }
+
+  KOKKOS_INLINE_FUNCTION
+  long double ldrand(const long double& start, const long double& end) {
+    return ldrand(end - start) + start;
+  }
+  KOKKOS_INLINE_FUNCTION
+  __float128 f128rand() { return urand64() / static_cast<__float128>(MAX_URAND64); }
+
+  KOKKOS_INLINE_FUNCTION
+  __float128 f128rand(const __float128& range) {
+    return range * urand64() / static_cast<__float128>(MAX_URAND64);
+  }
+
+  KOKKOS_INLINE_FUNCTION
+  __float128 f128rand(const __float128& start, const __float128& end) {
+    return f128rand(end - start) + start;
+  }
+#endif
 
   // Marsaglia polar method for drawing a standard normal distributed random
   // number

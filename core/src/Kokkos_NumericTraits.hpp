@@ -52,6 +52,13 @@
 #include <cstdint>
 #include <type_traits>
 
+#ifndef KOKKOS_ENABLE_CUDA
+#ifdef KOKKOS_HAS_QUADMATH 
+#include <quadmath.h>
+#endif
+#endif
+
+
 namespace Kokkos {
 namespace Experimental {
 namespace Impl {
@@ -571,7 +578,27 @@ struct reduction_identity<long double> {
     return LDBL_MAX;
   }
 };
+
+//#ifdef KOKKOS_HAS_QUADMATH 
+template <>
+struct reduction_identity<__float128> {
+  KOKKOS_FORCEINLINE_FUNCTION constexpr static __float128 sum() {
+    return static_cast<__float128>(0.0);
+  }
+  KOKKOS_FORCEINLINE_FUNCTION constexpr static __float128 prod() {
+    return static_cast<__float128>(1.0);
+  }
+  KOKKOS_FORCEINLINE_FUNCTION constexpr static __float128 max() {
+    return -FLT128_MAX;
+  }
+  KOKKOS_FORCEINLINE_FUNCTION constexpr static __float128 min() {
+    return FLT128_MAX;
+  }
+};
+//#endif
 #endif
+
+
 
 }  // namespace Kokkos
 
