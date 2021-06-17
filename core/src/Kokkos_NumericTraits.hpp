@@ -52,6 +52,8 @@
 #include <cstdint>
 #include <type_traits>
 
+#define KOKKOS_HAS_QUADMATH
+
 #ifndef KOKKOS_ENABLE_CUDA
 #ifdef KOKKOS_HAS_QUADMATH 
 #include <quadmath.h>

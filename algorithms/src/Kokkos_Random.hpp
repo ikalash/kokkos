@@ -51,6 +51,8 @@
 #include <cstdlib>
 #include <cmath>
 
+#define KOKKOS_HAS_QUADMATH
+
 #ifndef KOKKOS_ENABLE_CUDA
 #ifdef KOKKOS_HAS_QUADMATH 
 #include <quadmath.h>
@@ -516,7 +518,7 @@ struct rand<Generator, long double> {
     return gen.ldrand(start, end);
   }
 };
-#ifdef KOKKOS_HAS_QUADMATH 
+/*#ifdef KOKKOS_HAS_QUADMATH 
 template <class Generator>
 struct rand<Generator, __float128> {
   KOKKOS_INLINE_FUNCTION
@@ -532,7 +534,7 @@ struct rand<Generator, __float128> {
     return gen.f128rand(start, end);
   }
 };
-#endif
+#endif*/
 #endif
 
 
