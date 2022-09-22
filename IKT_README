@@ -1,0 +1,7 @@
+This version of Kokkos works with the following checkout of Trilinos:
+
+d7d08202150
+
+In mid-September 2022, changes were made to Kokkos and Trilinos making 
+this version of Kokkos not work with Trilinos anymore, and Irina did not 
+have the bandwidth / funding to fix things to work with Trilinos VOTD.
